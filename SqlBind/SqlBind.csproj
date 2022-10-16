@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>dcx/Maroontress.SqlBind.xml</DocumentationFile>
+    <AssemblyName>Maroontress.SqlBind</AssemblyName>
+    <RootNamespace>Maroontress.SqlBind</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Maroontress.SqlBind</PackageId>
+    <PackageVersion>$(Version)</PackageVersion>
+    <Authors>Tomohisa Tanaka</Authors>
+    <PackageProjectUrl>https://maroontress.github.io/SqlBind-CSharp/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/maroontress/SqlBind.CSharp</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>Maroontress.SqlBind is a C# class library that is a wrapper for SQLite.</Description>
+    <PackageReleaseNotes>See https://maroontress.github.io/SqlBind-CSharp/releasenotes.html</PackageReleaseNotes>
+    <Copyright>Copyright (c) 2023 Maroontress Fast Software</Copyright>
+    <PackageTags>sqlite</PackageTags>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <Version>1.0.0.0</Version>
+    <RepositoryType />
+    <Company>Maroontress Fast Software</Company>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>COPYRIGHT.txt</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Remove="Maroontress\SqlBind\.namespace.xml" />
+    <None Remove="Maroontress\SqlBind\Impl\.namespace.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Maroontress\SqlBind\.namespace.xml" />
+    <AdditionalFiles Include="Maroontress\SqlBind\Impl\.namespace.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="nuget\readme.txt">
+      <Pack>true</Pack>
+      <PackagePath>\</PackagePath>
+    </Content>
+    <Content Include="nuget\COPYRIGHT.txt">
+      <Pack>true</Pack>
+      <PackagePath>\</PackagePath>
+    </Content>
+    <Content Include="nuget\LEGAL_NOTICES.txt">
+      <Pack>true</Pack>
+      <PackagePath>\</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleChecker" Version="1.0.27" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435" PrivateAssets="all" />
+    <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.5" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Namespace Name="Maroontress.SqlBind.Impl">
+  <Docs>
+    <summary>
+      This namespace provides the default implementation of some interfaces.
+    </summary>
+  </Docs>
+</Namespace>

@@ -1,0 +1,37 @@
+name: .NET 6 and 7 CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet: [ '6.0.x', '7.0.x' ]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: |
+          3.1.x
+          ${{ matrix.dotnet }}
+    - name: Check BOM
+      run: |
+        dotnet tool install -g BomSweeper.GlobalTool
+        $HOME/.dotnet/tools/bomsweeper '**/*.cs' '**/*.csproj' '**/*.sln'
+    - name: Build
+      run: dotnet build --configuration Release
+    - name: Install 
+      run: dotnet tool install -g dotnet-reportgenerator-globaltool
+    - name: Test
+      run: |
+        rm -rf MsTestResults
+        dotnet test --configuration Release --no-build --logger "console;verbosity=detailed" --collect:"XPlat Code Coverage" --results-directory MsTestResults
+        reportgenerator -reports:MsTestResults/*/coverage.cobertura.xml -targetdir:Coverlet-html
+    - name: Archive artifacts (code coverage)
+      uses: actions/upload-artifact@v3
+      with:
+        name: code-coverage-report-${{ matrix.dotnet }}
+        path: Coverlet-html

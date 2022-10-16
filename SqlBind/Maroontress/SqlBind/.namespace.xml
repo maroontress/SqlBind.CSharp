@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Namespace Name="Maroontress.SqlBind">
+  <Docs>
+    <summary>
+      This namespace provides the wrapper of SQLite.
+    </summary>
+  </Docs>
+</Namespace>
