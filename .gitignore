@@ -1,0 +1,10 @@
+/.vs/
+/*/bin/
+/*/obj/
+/SqlBind/dcx/
+/SqlBind.Test/TestResults/
+/Coverlet-Html/
+/SqlBind/html/
+/SqlBind/Properties/
+/SqlBind.Test/Properties/
+*.csproj.user
