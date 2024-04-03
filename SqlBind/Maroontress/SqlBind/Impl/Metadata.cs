@@ -209,8 +209,7 @@ public sealed class Metadata<T> : WildMetadata
 
     private static string ToTableName(Type type)
     {
-        var a = type.GetCustomAttribute<TableAttribute>();
-        if (a is null)
+        if (type.GetCustomAttribute<TableAttribute>() is not {} a)
         {
             throw new ArgumentException(
                 $"not annotated with {nameof(TableAttribute)}",
@@ -224,8 +223,8 @@ public sealed class Metadata<T> : WildMetadata
         var allPublicConstructors = type.GetConstructors();
         var ctors = allPublicConstructors.Where(
                 i => i.GetCustomAttribute<IgnoredAttribute>() is null)
-            .ToArray();
-        if (ctors.Length is not 1)
+            .ToList();
+        if (ctors.Count is not 1)
         {
             throw new ArgumentException(
                 "must have the single public constructor without [Ignored] "
@@ -247,8 +246,7 @@ public sealed class Metadata<T> : WildMetadata
     {
         return i =>
         {
-            var o = field.GetPropertyValue(i);
-            if (o is null)
+            if (field.GetPropertyValue(i) is not {} o)
             {
                 throw new ArgumentException(
                     $"'{field.ParameterName}' must be non-null",

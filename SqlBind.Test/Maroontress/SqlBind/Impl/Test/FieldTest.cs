@@ -9,11 +9,11 @@ public sealed class FieldTest
     public void New_TypeMismatchRow()
     {
         var t = typeof(CoffeeRow);
-        var ctor = t.GetConstructor(new[]
-        {
+        var ctor = t.GetConstructor(
+        [
             typeof(string),
             typeof(string),
-        });
+        ]);
         var all = ctor!.GetParameters();
         var country = all[1];
 

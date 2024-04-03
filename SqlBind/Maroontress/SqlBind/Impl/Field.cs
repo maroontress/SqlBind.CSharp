@@ -35,8 +35,8 @@ public sealed class Field<T> : WildField
             throw new ArgumentException(
                 "type mismatch", nameof(parameterInfo));
         }
-        var column = parameterInfo.GetCustomAttribute<ColumnAttribute>();
-        if (column is null)
+        if (parameterInfo.GetCustomAttribute<ColumnAttribute>()
+            is not {} column)
         {
             throw new ArgumentException(
                 "all parameters of the constructor must be annotated"
@@ -54,8 +54,7 @@ public sealed class Field<T> : WildField
             throw new ArgumentException(
                 "unsupported parameter type", ParameterName);
         }
-        var propertyInfo = type.GetProperty(ParameterName);
-        if (propertyInfo is null)
+        if (type.GetProperty(ParameterName) is not {} propertyInfo)
         {
             throw new ArgumentException(
                 $"invalid type '{type}': no property found corresponding "
@@ -86,19 +85,16 @@ public sealed class Field<T> : WildField
     /// <inheritdoc/>
     public bool IsAutoIncrement { get; }
 
-    private static IReadOnlyDictionary<Type, string>
-            SqlTypeMap
-    { get; } = ImmutableDictionary.CreateRange(
-        ImmutableArray.Create(
-            ToTypePair<string>("TEXT"),
-            ToTypePair<long>("INTEGER")));
+    private static ImmutableDictionary<Type, string> SqlTypeMap { get; }
+        = ImmutableDictionary.CreateRange(
+            [ToTypePair<string>("TEXT"),
+                ToTypePair<long>("INTEGER")]);
 
     private static IEnumerable<KeyValuePair<Type, string>>
-            SqlColumnFlags
-    { get; } = ImmutableArray.Create(
-        ToTypePair<PrimaryKeyAttribute>("PRIMARY KEY"),
-        ToTypePair<AutoIncrementAttribute>("AUTOINCREMENT"),
-        ToTypePair<UniqueAttribute>("UNIQUE"));
+            SqlColumnFlags { get; }
+        = [ToTypePair<PrimaryKeyAttribute>("PRIMARY KEY"),
+            ToTypePair<AutoIncrementAttribute>("AUTOINCREMENT"),
+            ToTypePair<UniqueAttribute>("UNIQUE")];
 
     /// <summary>
     /// Gets the value of the property associated with the field that the

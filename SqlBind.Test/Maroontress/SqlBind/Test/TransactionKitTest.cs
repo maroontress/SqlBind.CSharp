@@ -8,24 +8,22 @@ using StyleChecker.Annotations;
 public sealed class TransactionKitTest
 {
     private static ImmutableArray<string> ExpectedCommitTrace { get; }
-        = ImmutableArray.Create(
-            "decoy.db",
+        = ["decoy.db",
             "DatabaseLink#BeginTransaction",
             "DatabaseLink#NewSiphon",
             "Committable#Commit",
             "Committable#Dispose",
-            "DatabaseLink#Dispose");
+            "DatabaseLink#Dispose"];
 
     private static ImmutableArray<string> ExpectedRollbackTrace { get; }
-        = ImmutableArray.Create(
-            "decoy.db",
+        = ["decoy.db",
             "DatabaseLink#BeginTransaction",
             "DatabaseLink#NewSiphon",
             "Committable#Rollback",
             "Committable#Dispose",
-            "DatabaseLink#Dispose");
+            "DatabaseLink#Dispose"];
 
-    private List<string> Trace { get; } = new();
+    private List<string> Trace { get; } = [];
 
     [TestInitialize]
     public void Initialize()

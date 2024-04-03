@@ -1,17 +1,11 @@
 namespace Maroontress.SqlBind.Impl.Test;
 
 [Table("foo")]
-public sealed class ParameterAndPropertyNameMismatchRow
+public sealed class ParameterAndPropertyNameMismatchRow(
+    [Column("one")] string one,
+    [Column("two")] string two)
 {
-    public ParameterAndPropertyNameMismatchRow(
-        [Column("one")] string one,
-        [Column("two")] string two)
-    {
-        One = one;
-        Two = two;
-    }
+    public string One { get; } = one;
 
-    public string One { get; }
-
-    public string Two { get; }
+    public string Two { get; } = two;
 }

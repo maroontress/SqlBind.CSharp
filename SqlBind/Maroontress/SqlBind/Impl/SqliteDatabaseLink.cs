@@ -1,26 +1,18 @@
 namespace Maroontress.SqlBind.Impl;
 
-using System;
 using Microsoft.Data.Sqlite;
+using System;
 
 /// <summary>
 /// The implementation with Sqlite.
 /// </summary>
-public sealed class SqliteDatabaseLink : DatabaseLink
+/// <param name="connection">
+/// The Sqlite's connection.
+/// </param>
+public sealed class SqliteDatabaseLink(SqliteConnection connection)
+    : DatabaseLink
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SqliteDatabaseLink"/>
-    /// class.
-    /// </summary>
-    /// <param name="connection">
-    /// The Sqlite's connection.
-    /// </param>
-    public SqliteDatabaseLink(SqliteConnection connection)
-    {
-        Connection = connection;
-    }
-
-    private SqliteConnection Connection { get; }
+    private SqliteConnection Connection { get; } = connection;
 
     /// <inheritdoc/>
     public Committable BeginTransaction()

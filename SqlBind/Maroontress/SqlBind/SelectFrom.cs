@@ -2,8 +2,8 @@
 
 namespace Maroontress.SqlBind;
 
-using System.Collections.Generic;
 using Maroontress.SqlBind.Impl;
+using System.Collections.Generic;
 
 /// <summary>
 /// Represents the <c>SELECT</c> statement in SQL without a <c>WHERE</c>

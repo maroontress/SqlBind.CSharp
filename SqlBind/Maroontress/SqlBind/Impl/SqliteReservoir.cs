@@ -1,27 +1,19 @@
 namespace Maroontress.SqlBind.Impl;
 
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Data.Sqlite;
 
 /// <summary>
 /// The <see cref="Reservoir"/> implementation wrapping SQLite.
 /// </summary>
-internal sealed class SqliteReservoir : Reservoir
+/// <param name="reader">
+/// The <see cref="SqliteDataReader"/> object.
+/// </param>
+internal sealed class SqliteReservoir(SqliteDataReader reader) : Reservoir
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SqliteReservoir"/> class.
-    /// </summary>
-    /// <param name="reader">
-    /// The <see cref="SqliteDataReader"/> object.
-    /// </param>
-    public SqliteReservoir(SqliteDataReader reader)
-    {
-        Reader = reader;
-    }
-
-    private SqliteDataReader Reader { get; }
+    private SqliteDataReader Reader { get; } = reader;
 
     /// <inheritdoc/>
     public void Dispose()
@@ -51,7 +43,9 @@ internal sealed class SqliteReservoir : Reservoir
         {
             if (Reader.FieldCount != n)
             {
-                throw new ArgumentException("T");
+                throw new ArgumentException(
+                    "The number of constructor parameters does not match",
+                    nameof(T));
             }
             Reader.GetValues(args);
             var instance = (T)ctor.Invoke(args);

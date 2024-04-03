@@ -1,34 +1,25 @@
 namespace Maroontress.SqlBind;
 
-using System;
 using Maroontress.SqlBind.Impl;
+using System;
 
 /// <summary>
 /// The factory that creates queries.
 /// </summary>
-public sealed class TransactionKit
+/// <param name="databasePath">
+/// The path of the database file.
+/// </param>
+/// <param name="logger">
+/// The logger.
+/// </param>
+public sealed class TransactionKit(
+    string databasePath, Action<Func<string>> logger)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TransactionKit"/> class.
-    /// </summary>
-    /// <param name="databasePath">
-    /// The path of the database file.
-    /// </param>
-    /// <param name="logger">
-    /// The logger.
-    /// </param>
-    public TransactionKit(string databasePath, Action<Func<string>> logger)
-    {
-        DatabasePath = databasePath;
-        Logger = logger;
-        Cache = new();
-    }
+    private string DatabasePath { get; } = databasePath;
 
-    private string DatabasePath { get; }
+    private Action<Func<string>> Logger { get; } = logger;
 
-    private Action<Func<string>> Logger { get; }
-
-    private MetadataBank Cache { get; }
+    private MetadataBank Cache { get; } = new();
 
     /// <summary>
     /// Executes queries within a single transaction.
