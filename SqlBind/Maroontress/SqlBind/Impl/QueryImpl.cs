@@ -8,26 +8,18 @@ using System.Linq;
 /// <summary>
 /// The default implementation of <see cref="Query"/>.
 /// </summary>
-public sealed class QueryImpl : Query
+/// <param name="siphon">
+/// The abstraction of the database connection.
+/// </param>
+/// <param name="bank">
+/// The cache for the reflection.
+/// </param>
+public sealed class QueryImpl(Siphon siphon, MetadataBank bank)
+    : Query
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="QueryImpl"/> class.
-    /// </summary>
-    /// <param name="siphon">
-    /// The abstraction of the database connection.
-    /// </param>
-    /// <param name="bank">
-    /// The cache for the reflection.
-    /// </param>
-    public QueryImpl(Siphon siphon, MetadataBank bank)
-    {
-        Siphon = siphon;
-        Bank = bank;
-    }
+    private Siphon Siphon { get; } = siphon;
 
-    private Siphon Siphon { get; }
-
-    private MetadataBank Bank { get; }
+    private MetadataBank Bank { get; } = bank;
 
     /// <inheritdoc/>
     public SelectFrom<T> SelectAllFrom<T>(string alias)
@@ -125,6 +117,14 @@ public sealed class QueryImpl : Query
     {
         return Bank.GetMetadata<T>()
             .ToColumnName(parameterName);
+    }
+
+    /// <inheritdoc/>
+    public Update Update<T>(string alias)
+        where T : notnull
+    {
+        var m = Bank.GetMetadata<T>();
+        return new UpdateImpl(Siphon, m.UpdateStatement, alias);
     }
 
     private long GetLastInsertRowId()

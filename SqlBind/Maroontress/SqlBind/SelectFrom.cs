@@ -2,7 +2,6 @@
 
 namespace Maroontress.SqlBind;
 
-using Maroontress.SqlBind.Impl;
 using System.Collections.Generic;
 
 /// <summary>
@@ -42,9 +41,9 @@ public interface SelectFrom<T> : TerminalOperation<T>
         where U : notnull;
 
     /// <summary>
-    /// Gets a new <see cref="WhereImpl{T}"/> object, which represents
-    /// the combination of <c>this</c> (<c>SELECT</c> ... <c>From</c> ...)
-    /// and the <c>WHERE</c> ... clause.
+    /// Gets a new <see cref="Where{T}"/> object, which represents the
+    /// combination of <c>this</c> (<c>SELECT</c> ... <c>From</c> ...) and the
+    /// <c>WHERE</c> ... clause.
     /// </summary>
     /// <remarks>
     /// The object that this method returns represents <c>SELECT ... FROM ...
@@ -58,7 +57,7 @@ public interface SelectFrom<T> : TerminalOperation<T>
     /// contain all the keys. Each value must be of the appropriate type.
     /// </param>
     /// <returns>
-    /// The new <see cref="WhereImpl{T}"/> object.
+    /// The new <see cref="Where{T}"/> object.
     /// </returns>
     Where<T> Where(
         string condition,
