@@ -2,14 +2,10 @@ namespace Maroontress.SqlBind.Test;
 
 using Maroontress.SqlBind.Impl;
 
-public sealed class DecoyCommittable : Committable
+public sealed class DecoyCommittable(List<string> trace)
+    : Committable
 {
-    public DecoyCommittable(List<string> trace)
-    {
-        Trace = trace;
-    }
-
-    private List<string> Trace { get; }
+    private List<string> Trace { get; } = trace;
 
     public void Commit()
     {

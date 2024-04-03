@@ -1,34 +1,25 @@
 namespace Maroontress.SqlBind.Impl;
 
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.Sqlite;
 
 /// <summary>
 /// The implementation with Sqlite that has the logging facility.
 /// </summary>
-internal sealed class SqliteSiphon : Siphon
+/// <param name="connection">
+/// The connection to the Sqlite.
+/// </param>
+/// <param name="logger">
+/// The logger.
+/// </param>
+internal sealed class SqliteSiphon(
+        SqliteConnection connection, @Action<Func<string>> logger)
+    : Siphon
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SqliteSiphon"/> class.
-    /// </summary>
-    /// <param name="connection">
-    /// The connection to the Sqlite.
-    /// </param>
-    /// <param name="logger">
-    /// The logger.
-    /// </param>
-    public SqliteSiphon(
-        SqliteConnection connection,
-        Action<Func<string>> logger)
-    {
-        Connection = connection;
-        Logger = logger;
-    }
+    private SqliteConnection Connection { get; } = connection;
 
-    private SqliteConnection Connection { get; }
-
-    private Action<Func<string>> Logger { get; }
+    private Action<Func<string>> Logger { get; } = logger;
 
     /// <inheritdoc/>
     public void ExecuteNonQuery(

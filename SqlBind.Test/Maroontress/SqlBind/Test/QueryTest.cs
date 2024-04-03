@@ -18,7 +18,7 @@ public sealed class QueryTest
         var cache = new MetadataBank();
         var siphon = new TestSiphon();
         var q = new QueryImpl(siphon, cache);
-        q.NewTables(new[] { typeof(CoffeeRow) });
+        q.NewTables([typeof(CoffeeRow)]);
         var result = siphon.StatementList;
         var resultTexts = result.Select(i => i.Text).ToArray();
         var expectedTexts = new[]
@@ -36,7 +36,7 @@ public sealed class QueryTest
         var cache = new MetadataBank();
         var siphon = new TestSiphon();
         var q = new QueryImpl(siphon, cache);
-        q.NewTables(new[] { typeof(PersonRow) });
+        q.NewTables([typeof(PersonRow)]);
         var result = siphon.StatementList;
         var resultTexts = result.Select(i => i.Text).ToArray();
         var expectedTexts = new[]
@@ -57,7 +57,7 @@ public sealed class QueryTest
     public void Insert()
     {
         var cache = new MetadataBank();
-        var siphon = new TestSiphon(Array.Empty<Reservoir>());
+        var siphon = new TestSiphon([]);
         var q = new QueryImpl(siphon, cache);
         q.Insert(Bolivia);
         var result = siphon.StatementList;
@@ -310,7 +310,7 @@ public sealed class QueryTest
     public void InsertAndGetRowId()
     {
         var cache = new MetadataBank();
-        var siphon = new TestSiphon(Array.Empty<Reservoir>());
+        var siphon = new TestSiphon([]);
         var q = new QueryImpl(siphon, cache);
         var row = new PersonRow(0, 1, 2);
         var id = q.InsertAndGetRowId(row);
@@ -377,22 +377,17 @@ public sealed class QueryTest
         Assert.AreEqual(p["$name"], Zambia.Name);
     }
 
-    public sealed class TestReservoir : Reservoir
+    public sealed class TestReservoir(IEnumerable<object> list)
+        : Reservoir
     {
         public TestReservoir()
-            : this(Array.Empty<object>())
+            : this([])
         {
         }
 
-        public TestReservoir(IEnumerable<object> list)
-        {
-            InstanceQueue = new Queue<object>(list);
-            Current = null;
-        }
+        private Queue<object> InstanceQueue { get; } = new(list);
 
-        private Queue<object> InstanceQueue { get; }
-
-        private object? Current { get; set; }
+        private object? Current { get; set; } = null;
 
         public void Dispose()
         {
@@ -430,23 +425,20 @@ public sealed class QueryTest
         }
     }
 
-    public sealed class TestSiphon : Siphon
+    public sealed class TestSiphon(IEnumerable<Reservoir> reservoirs)
+        : Siphon
     {
         private long scalar = 0;
 
         public TestSiphon()
-            : this(Array.Empty<Reservoir>())
+            : this([])
         {
         }
 
-        public TestSiphon(IEnumerable<Reservoir> reservoirs)
-        {
-            Reservoirs = reservoirs.GetEnumerator();
-        }
-
-        public List<Statement> StatementList { get; } = new();
+        public List<Statement> StatementList { get; } = [];
 
         private IEnumerator<Reservoir> Reservoirs { get; }
+            = reservoirs.GetEnumerator();
 
         public long ExecuteLong(
             string text,
@@ -476,18 +468,13 @@ public sealed class QueryTest
         }
     }
 
-    public sealed class Statement
+    public sealed class Statement(
+        string text,
+        IReadOnlyDictionary<string, object>? parameters)
     {
-        public Statement(
-            string text,
-            IReadOnlyDictionary<string, object>? parameters)
-        {
-            Text = text;
-            Parameters = parameters?.ToImmutableDictionary();
-        }
-
-        public string Text { get; }
+        public string Text { get; } = text;
 
         public IReadOnlyDictionary<string, object>? Parameters { get; }
+            = parameters?.ToImmutableDictionary();
     }
 }

@@ -2,14 +2,10 @@ namespace Maroontress.SqlBind.Test;
 
 using Maroontress.SqlBind.Impl;
 
-public sealed class DecoyToolkit : Toolkit
+public sealed class DecoyToolkit(Func<string, DatabaseLink> toLink)
+    : Toolkit
 {
-    public DecoyToolkit(Func<string, DatabaseLink> toLink)
-    {
-        ToLink = toLink;
-    }
-
-    private Func<string, DatabaseLink> ToLink { get; }
+    private Func<string, DatabaseLink> ToLink { get; } = toLink;
 
     public DatabaseLink NewDatabaseLink(string databasePath)
     {

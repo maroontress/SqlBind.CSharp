@@ -4,14 +4,10 @@ using System;
 using Maroontress.SqlBind.Impl;
 using StyleChecker.Annotations;
 
-public sealed class DecoyDatabaseLink : DatabaseLink
+public sealed class DecoyDatabaseLink(List<string> trace)
+    : DatabaseLink
 {
-    public DecoyDatabaseLink(List<string> trace)
-    {
-        Trace = trace;
-    }
-
-    private List<string> Trace { get; }
+    private List<string> Trace { get; } = trace;
 
     public Committable BeginTransaction()
     {
