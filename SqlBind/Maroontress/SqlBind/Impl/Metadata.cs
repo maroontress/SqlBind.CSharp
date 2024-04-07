@@ -56,6 +56,11 @@ public sealed class Metadata<T> : WildMetadata
             return $"INSERT INTO {tableName} ({columns}) VALUES ({args})";
         }
 
+        string ToUpdateStatement()
+        {
+            return $"UPDATE {tableName}";
+        }
+
         Func<T, IReadOnlyDictionary<string, object>>
             NewInsertParameterMap()
         {
@@ -112,6 +117,7 @@ public sealed class Metadata<T> : WildMetadata
         TableName = tableName;
         Fields = fields;
         InsertStatement = ToInsertStatement();
+        UpdateStatement = ToUpdateStatement();
         DeleteStatement = $"DELETE FROM {tableName}";
         CreateTableStatements = ToCreateTableStatements().ToImmutableArray();
         DropTableStatements = ToDropTableStatements().ToImmutableArray();
@@ -129,6 +135,9 @@ public sealed class Metadata<T> : WildMetadata
 
     /// <inheritdoc/>
     public string InsertStatement { get; }
+
+    /// <inheritdoc/>
+    public string UpdateStatement { get; }
 
     /// <inheritdoc/>
     public string TableName { get; }

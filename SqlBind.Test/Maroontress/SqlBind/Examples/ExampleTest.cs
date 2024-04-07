@@ -4,7 +4,7 @@ namespace Maroontress.SqlBind.Examples;
 public sealed class ExampleTest
 {
     [TestMethod]
-    public void Run()
+    public void RunExample()
     {
         var e = new Example();
         e.CreateTableAndInsertRows();
@@ -12,5 +12,15 @@ public sealed class ExampleTest
         e.CreateTables();
         e.ListActorNames("Peripheral");
         e.ListActorNamesV2("Peripheral");
+    }
+
+    [TestMethod]
+    public void RunUpdateExample()
+    {
+        var u = new UpdateExample();
+        u.CreateTable();
+        u.SelectAllRows();
+        u.UpdateState();
+        u.SelectAllRows();
     }
 }

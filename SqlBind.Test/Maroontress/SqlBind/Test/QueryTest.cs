@@ -74,6 +74,36 @@ public sealed class QueryTest
     }
 
     [TestMethod]
+    public void Update()
+    {
+        var cache = new MetadataBank();
+        var reservoir = new TestReservoir();
+        var siphon = new TestSiphon([reservoir]);
+        var q = new QueryImpl(siphon, cache);
+        var map = new Dictionary<string, object>()
+        {
+            ["$newLastNameId"] = 123L,
+            ["$id"] = 456L,
+        };
+        q.Update<PersonRow>("p").Set("lastNameId = $newLastNameId")
+            .Where("p.id = $id")
+            .Execute(map);
+        var result = siphon.StatementList;
+        var resultTexts = result.Select(i => i.Text).ToArray();
+        var expectedTexts = new[]
+        {
+            "UPDATE persons AS p "
+                + "SET lastNameId = $newLastNameId "
+                + "WHERE p.id = $id",
+        };
+        CollectionAssert.AreEqual(expectedTexts, resultTexts);
+        var p = result[0].Parameters;
+        Assert.IsNotNull(p);
+        Assert.AreEqual(p["$newLastNameId"], 123L);
+        Assert.AreEqual(p["$id"], 456L);
+    }
+
+    [TestMethod]
     public void SelectAll()
     {
         var cache = new MetadataBank();

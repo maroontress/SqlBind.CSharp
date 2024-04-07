@@ -45,7 +45,7 @@ internal sealed class SqliteSiphon(
         IReadOnlyDictionary<string, object>? parameters = null)
     {
         var command = NewCommand(text, parameters);
-        if (!(command.ExecuteScalar() is {} rowId))
+        if (command.ExecuteScalar() is not {} rowId)
         {
             throw new NullReferenceException();
         }

@@ -44,6 +44,22 @@ public interface Query
         where T : notnull;
 
     /// <summary>
+    /// Gets the <see cref="Update"/> object to update the specified table.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type qualified with <see cref="TableAttribute"/>.
+    /// </typeparam>
+    /// <param name="alias">
+    /// The alias of the table name, which is used in the <c>Where</c> clause
+    /// (see <see cref="UpdateWhere"/>).
+    /// </param>
+    /// <returns>
+    /// The <see cref="Update"/> object.
+    /// </returns>
+    Update Update<T>(string alias)
+        where T : notnull;
+
+    /// <summary>
     /// Gets the <see cref="DeleteFrom{T}"/> object to delete the specified
     /// rows of the specified table.
     /// </summary>

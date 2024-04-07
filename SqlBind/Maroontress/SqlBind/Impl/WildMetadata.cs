@@ -25,6 +25,11 @@ public interface WildMetadata
     string InsertStatement { get; }
 
     /// <summary>
+    /// Gets the update statement.
+    /// </summary>
+    string UpdateStatement { get; }
+
+    /// <summary>
     /// Gets the name of the table.
     /// </summary>
     string TableName { get; }
