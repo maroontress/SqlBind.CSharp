@@ -264,8 +264,8 @@ SqlBind.CSharp is available as
 
 ### Requirements for build
 
-- Visual Studio 2022 (Version 17.5)
-  or [.NET 7.0 SDK (SDK 7.0.203)][dotnet-sdk]
+- Visual Studio 2022 (Version 17.9)
+  or [.NET 8.0 SDK (SDK 8.0.203)][dotnet-sdk]
 
 ### Build
 
