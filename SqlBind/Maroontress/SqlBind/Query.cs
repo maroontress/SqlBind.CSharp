@@ -44,18 +44,37 @@ public interface Query
         where T : notnull;
 
     /// <summary>
-    /// Gets the <see cref="Update"/> object to update the specified table.
+    /// Gets the <see cref="SqlBind.Update"/> object to update the specified
+    /// table.
     /// </summary>
     /// <typeparam name="T">
     /// The type qualified with <see cref="TableAttribute"/>.
     /// </typeparam>
     /// <param name="alias">
-    /// The alias of the table name, which is used in the <c>Where</c> clause
-    /// (see <see cref="UpdateWhere"/>).
+    /// The alias of the table name, which can be used in the <c>Where</c>
+    /// clause (see <see cref="UpdateSet.Where(string)"/>).
     /// </param>
     /// <returns>
-    /// The <see cref="Update"/> object.
+    /// The <see cref="SqlBind.Update"/> object.
     /// </returns>
+    /// <example>
+    /// <code>
+    /// var kit = new TransactionKit(
+    ///     "update_example.db", m => Console.WriteLine(m()));
+    /// var map = new Dictionary&lt;string, object>()
+    /// {
+    ///     ["$id"] = 2L,
+    ///     ["$newState"] = "Closed",
+    /// };
+    /// kit.Execute(q =>
+    /// {
+    ///     q.Update&lt;Issue>("i")
+    ///         .Set("state = $newState")
+    ///         .Where("i.id = $id")
+    ///         .Execute(map);
+    /// });
+    /// </code>
+    /// </example>
     Update Update<T>(string alias)
         where T : notnull;
 

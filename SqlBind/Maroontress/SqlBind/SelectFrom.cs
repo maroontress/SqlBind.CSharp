@@ -5,8 +5,8 @@ namespace Maroontress.SqlBind;
 using System.Collections.Generic;
 
 /// <summary>
-/// Represents the <c>SELECT</c> statement in SQL without a <c>WHERE</c>
-/// clause. It can end with a <c>INNER JOIN</c> clause.
+/// Represents the <c>SELECT</c> statement without a <c>WHERE</c> clause. It
+/// can end with a <c>INNER JOIN</c> clause.
 /// </summary>
 /// <typeparam name="T">
 /// The type of the class representing any row of the result of the query.
