@@ -3,7 +3,7 @@
 namespace Maroontress.SqlBind;
 
 /// <summary>
-/// Represents the <c>SELECT</c> statement in SQL.
+/// Represents the <c>SELECT</c> statement.
 /// </summary>
 /// <typeparam name="T">
 /// The type of the class representing any row of the result of the query.

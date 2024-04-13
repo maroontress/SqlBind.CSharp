@@ -3,17 +3,19 @@ namespace Maroontress.SqlBind;
 using System.Collections.Generic;
 
 /// <summary>
-/// Represents the executable <c>UPDATE</c> statement in SQL.
+/// Represents the executable <c>UPDATE</c> statement.
 /// </summary>
 public interface UpdateTerminalOperation
 {
     /// <summary>
-    /// Executes the update operation with the specified parameters.
+    /// Executes the <c>UPDATE</c> statement with the specified parameters.
     /// </summary>
     /// <param name="parameters">
-    /// Immutable key-value pairs. The parameters in the <c>Set</c> and
-    /// <c>Where</c> clauses must contain all the keys. Each value must be of
-    /// the appropriate type.
+    /// Immutable key-value pairs. All parameter names in the <c>SET</c> and
+    /// <c>WHERE</c> clauses must be included in <c>parameters</c> as keys.
+    /// Each value must be of the appropriate type.
     /// </param>
+    /// <seealso cref="Update.Set(string)"/>
+    /// <seealso cref="UpdateSet.Where(string)"/>
     void Execute(IReadOnlyDictionary<string, object> parameters);
 }

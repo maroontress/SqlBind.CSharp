@@ -3,7 +3,7 @@ namespace Maroontress.SqlBind;
 using System.Collections.Generic;
 
 /// <summary>
-/// Represents the <c>DELETE</c> statement in SQL.
+/// Represents the <c>DELETE</c> statement.
 /// </summary>
 /// <typeparam name="T">
 /// The type of the class qualified with the <see cref="TableAttribute"/>.
