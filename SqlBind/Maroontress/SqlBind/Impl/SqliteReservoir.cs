@@ -11,7 +11,7 @@ using System.Linq;
 /// <param name="reader">
 /// The <see cref="SqliteDataReader"/> object.
 /// </param>
-internal sealed class SqliteReservoir(SqliteDataReader reader) : Reservoir
+public sealed class SqliteReservoir(SqliteDataReader reader) : Reservoir
 {
     private SqliteDataReader Reader { get; } = reader;
 

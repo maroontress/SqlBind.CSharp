@@ -8,34 +8,24 @@ namespace Maroontress.SqlBind.Impl;
 /// <typeparam name="T">
 /// The type of the class representing any row of the result of the query.
 /// </typeparam>
-public sealed class SelectImpl<T> : Select<T>
+/// <param name="bank">
+/// The <see cref="Bank"/> object.
+/// </param>
+/// <param name="siphon">
+/// The <see cref="Siphon"/> object.
+/// </param>
+/// <param name="text">
+/// The prefix statement.
+/// </param>
+public sealed class SelectImpl<T>(
+        MetadataBank bank, Siphon siphon, string text) : Select<T>
     where T : notnull
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SelectImpl{T}"/>
-    /// class.
-    /// </summary>
-    /// <param name="bank">
-    /// The <see cref="Bank"/> object.
-    /// </param>
-    /// <param name="siphon">
-    /// The <see cref="Siphon"/> object.
-    /// </param>
-    /// <param name="text">
-    /// The prefix statement.
-    /// </param>
-    internal SelectImpl(MetadataBank bank, Siphon siphon, string text)
-    {
-        Bank = bank;
-        Siphon = siphon;
-        Text = text;
-    }
+    private MetadataBank Bank { get; } = bank;
 
-    private MetadataBank Bank { get; }
+    private Siphon Siphon { get; } = siphon;
 
-    private Siphon Siphon { get; }
-
-    private string Text { get; }
+    private string Text { get; } = text;
 
     /// <inheritdoc/>
     public SelectFrom<T> From<U>(string alias)

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 /// Represents the <c>SET</c> clause in an <c>UPDATE</c> statement.
 /// </summary>
 public interface UpdateSet
-    : UpdateTerminalOperation
+    : UpdateTerminator
 {
     /// <summary>
     /// Gets a new <see cref="UpdateWhere"/> object, which represents the
@@ -18,8 +18,8 @@ public interface UpdateSet
     /// the <c>alias</c> specified in the <see cref="Query.Update{T}(string)"/>
     /// method. The values of the parameters in the expression can be specified
     /// with the <see
-    /// cref="UpdateTerminalOperation.Execute(IReadOnlyDictionary{string,
-    /// object})"/> method.
+    /// cref="UpdateTerminator.Execute(IReadOnlyDictionary{string, object})"/>
+    /// method.
     /// </param>
     /// <returns>
     /// The new <see cref="UpdateWhere"/> object.

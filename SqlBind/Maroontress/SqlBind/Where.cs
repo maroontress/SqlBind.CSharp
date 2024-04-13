@@ -6,7 +6,7 @@ namespace Maroontress.SqlBind;
 /// <typeparam name="T">
 /// The type of the class representing any row of the result of the query.
 /// </typeparam>
-public interface Where<T> : TerminalOperation<T>
+public interface Where<T> : SelectSorter<T>
     where T : notnull
 {
 }

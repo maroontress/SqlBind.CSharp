@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Represents the executable <c>UPDATE</c> statement.
 /// </summary>
-public interface UpdateTerminalOperation
+public interface UpdateTerminator
 {
     /// <summary>
     /// Executes the <c>UPDATE</c> statement with the specified parameters.

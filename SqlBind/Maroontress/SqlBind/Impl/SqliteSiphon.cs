@@ -13,8 +13,8 @@ using System.Collections.Generic;
 /// <param name="logger">
 /// The logger.
 /// </param>
-internal sealed class SqliteSiphon(
-        SqliteConnection connection, @Action<Func<string>> logger)
+public sealed class SqliteSiphon(
+        SqliteConnection connection, Action<Func<string>> logger)
     : Siphon
 {
     private SqliteConnection Connection { get; } = connection;

@@ -7,10 +7,17 @@ using Maroontress.SqlBind.Impl;
 [TestClass]
 public sealed class QueryTest
 {
-    private static readonly CoffeeRow Bolivia
+    private static CoffeeRow Bolivia { get; }
         = new("SOL DE LA MA\x00d1ANA", "BOLIVIA");
 
-    private static readonly CoffeeRow Zambia = new("ISANYA ESTATE", "ZAMBIA");
+    private static CoffeeRow Zambia { get; }
+        = new("ISANYA ESTATE", "ZAMBIA");
+
+    private static CoffeeRow CostaRicaTresRios { get; }
+        = new("TRES RIOS", "COSTA RICA");
+
+    private static CoffeeRow SunDriedCostaRica { get; }
+        = new("HACIENDA ALSACIA", "COSTA RICA");
 
     [TestMethod]
     public void NewTablesWithoutIndex()
@@ -107,12 +114,11 @@ public sealed class QueryTest
     public void SelectAll()
     {
         var cache = new MetadataBank();
-        var reservoir = new TestReservoir(new[]
-        {
+        var reservoir = new TestReservoir([
             Bolivia,
             Zambia,
-        });
-        var siphon = new TestSiphon(new[] { reservoir });
+        ]);
+        var siphon = new TestSiphon([reservoir]);
         var q = new QueryImpl(siphon, cache);
         var all = q.SelectAll<CoffeeRow>().ToArray();
         var result = siphon.StatementList;
@@ -133,19 +139,15 @@ public sealed class QueryTest
     public void SelectAllFrom_Where_Execute()
     {
         var cache = new MetadataBank();
-        var reservoir = new TestReservoir(new[]
-        {
-            Zambia,
-        });
-        var siphon = new TestSiphon(new[] { reservoir });
+        var reservoir = new TestReservoir([Zambia]);
+        var siphon = new TestSiphon([reservoir]);
         var q = new QueryImpl(siphon, cache);
         var parameters = ImmutableDictionary.CreateRange(
-            ImmutableArray.Create(
-                KeyValuePair.Create("$country", (object)Zambia.Name)));
+            [KeyValuePair.Create("$country", (object)Zambia.Name)]);
         var all = q.SelectAllFrom<CoffeeRow>("c")
             .Where("c.country = $country", parameters)
-            .Execute()
-            .ToArray();
+            .Execute();
+        var array = all.ToArray();
         var result = siphon.StatementList;
         var resultTexts = result.Select(i => i.Text).ToArray();
         var expectedTexts = new[]
@@ -156,27 +158,24 @@ public sealed class QueryTest
         CollectionAssert.AreEqual(expectedTexts, resultTexts);
         var p = result[0].Parameters;
         Assert.IsNotNull(p);
-        Assert.AreEqual(1, all.Length);
-        Assert.AreSame(Zambia, all[0]);
+        Assert.AreEqual(1, array.Length);
+        Assert.AreSame(Zambia, array[0]);
     }
 
     [TestMethod]
-    public void SelectAllFrom_Where_OrderBy()
+    public void SelectAllFrom_Where_OrderBy_Execute()
     {
         var cache = new MetadataBank();
-        var reservoir = new TestReservoir(new[]
-        {
-            Zambia,
-        });
-        var siphon = new TestSiphon(new[] { reservoir });
+        var reservoir = new TestReservoir([Zambia]);
+        var siphon = new TestSiphon([reservoir]);
         var q = new QueryImpl(siphon, cache);
         var parameters = ImmutableDictionary.CreateRange(
-            ImmutableArray.Create(
-                KeyValuePair.Create("$country", (object)Zambia.Name)));
+            [KeyValuePair.Create("$country", (object)Zambia.Name)]);
         var all = q.SelectAllFrom<CoffeeRow>("c")
             .Where("c.country = $country", parameters)
             .OrderBy("c.country")
-            .ToArray();
+            .Execute();
+        var array = all.ToArray();
         var result = siphon.StatementList;
         var resultTexts = result.Select(i => i.Text).ToArray();
         var expectedTexts = new[]
@@ -188,24 +187,91 @@ public sealed class QueryTest
         CollectionAssert.AreEqual(expectedTexts, resultTexts);
         var p = result[0].Parameters;
         Assert.IsNotNull(p);
-        Assert.AreEqual(1, all.Length);
-        Assert.AreSame(Zambia, all[0]);
+        Assert.AreEqual(1, array.Length);
+        Assert.AreSame(Zambia, array[0]);
+    }
+
+    [TestMethod]
+    public void SelectAllFrom_Where_OrderBy_Limit()
+    {
+        var cache = new MetadataBank();
+        var reservoir = new TestReservoir([
+            SunDriedCostaRica,
+            CostaRicaTresRios,
+        ]);
+        var siphon = new TestSiphon([reservoir]);
+        var q = new QueryImpl(siphon, cache);
+        var parameters = ImmutableDictionary.CreateRange(
+            [KeyValuePair.Create("$country", (object)"COSTA RICA")]);
+        var all = q.SelectAllFrom<CoffeeRow>("c")
+            .Where("c.country = $country", parameters)
+            .OrderBy("c.name")
+            .Limit(2);
+        var array = all.ToArray();
+        var result = siphon.StatementList;
+        var resultTexts = result.Select(i => i.Text).ToArray();
+        var expectedTexts = new[]
+        {
+            "SELECT c.name, c.country FROM coffees c "
+                + "WHERE c.country = $country "
+                + "ORDER BY c.name "
+                + "LIMIT 2",
+        };
+        CollectionAssert.AreEqual(expectedTexts, resultTexts);
+        var p = result[0].Parameters;
+        Assert.IsNotNull(p);
+        Assert.AreEqual(2, array.Length);
+        Assert.AreSame(SunDriedCostaRica, array[0]);
+        Assert.AreSame(CostaRicaTresRios, array[1]);
+    }
+
+    [TestMethod]
+    public void SelectAllFrom_Where_OrderBy_LimitOffset()
+    {
+        var cache = new MetadataBank();
+        var reservoir = new TestReservoir([
+            SunDriedCostaRica,
+            CostaRicaTresRios,
+        ]);
+        var siphon = new TestSiphon([reservoir]);
+        var q = new QueryImpl(siphon, cache);
+        var parameters = ImmutableDictionary.CreateRange(
+            [KeyValuePair.Create("$country", (object)"COSTA RICA")]);
+        var all = q.SelectAllFrom<CoffeeRow>("c")
+            .Where("c.country = $country", parameters)
+            .OrderBy("c.name")
+            .LimitOffset(2, 3);
+        var array = all.ToArray();
+        var result = siphon.StatementList;
+        var resultTexts = result.Select(i => i.Text).ToArray();
+        var expectedTexts = new[]
+        {
+            "SELECT c.name, c.country FROM coffees c "
+                + "WHERE c.country = $country "
+                + "ORDER BY c.name "
+                + "LIMIT 2 OFFSET 3",
+        };
+        CollectionAssert.AreEqual(expectedTexts, resultTexts);
+        var p = result[0].Parameters;
+        Assert.IsNotNull(p);
+        Assert.AreEqual(2, array.Length);
+        Assert.AreSame(SunDriedCostaRica, array[0]);
+        Assert.AreSame(CostaRicaTresRios, array[1]);
     }
 
     [TestMethod]
     public void SelectAllFrom_Execute()
     {
         var cache = new MetadataBank();
-        var reservoir = new TestReservoir(new[]
-        {
+        var reservoir = new TestReservoir([
             Zambia,
             Bolivia,
-        });
-        var siphon = new TestSiphon(new[] { reservoir });
+        ]);
+        var siphon = new TestSiphon([reservoir]);
         var q = new QueryImpl(siphon, cache);
         var all = q.SelectAllFrom<CoffeeRow>("c")
-            .Execute()
-            .ToArray();
+            .Execute();
+        var array = all.ToArray();
         var result = siphon.StatementList;
         var resultTexts = result.Select(i => i.Text).ToArray();
         var expectedTexts = new[]
@@ -215,25 +281,79 @@ public sealed class QueryTest
         CollectionAssert.AreEqual(expectedTexts, resultTexts);
         var p = result[0].Parameters;
         Assert.IsNull(p);
-        Assert.AreEqual(2, all.Length);
-        Assert.AreSame(Zambia, all[0]);
-        Assert.AreSame(Bolivia, all[1]);
+        Assert.AreEqual(2, array.Length);
+        Assert.AreSame(Zambia, array[0]);
+        Assert.AreSame(Bolivia, array[1]);
     }
 
     [TestMethod]
-    public void SelectAllFrom_OrderBy()
+    public void SelectAllFrom_Limit()
     {
         var cache = new MetadataBank();
-        var reservoir = new TestReservoir(new[]
-        {
+        var reservoir = new TestReservoir([
             Zambia,
             Bolivia,
-        });
-        var siphon = new TestSiphon(new[] { reservoir });
+        ]);
+        var siphon = new TestSiphon([reservoir]);
+        var q = new QueryImpl(siphon, cache);
+        var all = q.SelectAllFrom<CoffeeRow>("c")
+            .Limit(2);
+        var array = all.ToArray();
+        var result = siphon.StatementList;
+        var resultTexts = result.Select(i => i.Text).ToArray();
+        var expectedTexts = new[]
+        {
+            "SELECT c.name, c.country FROM coffees c LIMIT 2",
+        };
+        CollectionAssert.AreEqual(expectedTexts, resultTexts);
+        var p = result[0].Parameters;
+        Assert.IsNull(p);
+        Assert.AreEqual(2, array.Length);
+        Assert.AreSame(Zambia, array[0]);
+        Assert.AreSame(Bolivia, array[1]);
+    }
+
+    [TestMethod]
+    public void SelectAllFrom_LimitOffset()
+    {
+        var cache = new MetadataBank();
+        var reservoir = new TestReservoir([
+            Zambia,
+            Bolivia,
+        ]);
+        var siphon = new TestSiphon([reservoir]);
+        var q = new QueryImpl(siphon, cache);
+        var all = q.SelectAllFrom<CoffeeRow>("c")
+            .LimitOffset(2, 3);
+        var array = all.ToArray();
+        var result = siphon.StatementList;
+        var resultTexts = result.Select(i => i.Text).ToArray();
+        var expectedTexts = new[]
+        {
+            "SELECT c.name, c.country FROM coffees c LIMIT 2 OFFSET 3",
+        };
+        CollectionAssert.AreEqual(expectedTexts, resultTexts);
+        var p = result[0].Parameters;
+        Assert.IsNull(p);
+        Assert.AreEqual(2, array.Length);
+        Assert.AreSame(Zambia, array[0]);
+        Assert.AreSame(Bolivia, array[1]);
+    }
+
+    [TestMethod]
+    public void SelectAllFrom_OrderBy_Execute()
+    {
+        var cache = new MetadataBank();
+        var reservoir = new TestReservoir([
+            Zambia,
+            Bolivia,
+        ]);
+        var siphon = new TestSiphon([reservoir]);
         var q = new QueryImpl(siphon, cache);
         var all = q.SelectAllFrom<CoffeeRow>("c")
             .OrderBy("c.name")
-            .ToArray();
+            .Execute();
+        var array = all.ToArray();
         var result = siphon.StatementList;
         var resultTexts = result.Select(i => i.Text).ToArray();
         var expectedTexts = new[]
@@ -243,30 +363,26 @@ public sealed class QueryTest
         CollectionAssert.AreEqual(expectedTexts, resultTexts);
         var p = result[0].Parameters;
         Assert.IsNull(p);
-        Assert.AreEqual(2, all.Length);
-        Assert.AreSame(Zambia, all[0]);
-        Assert.AreSame(Bolivia, all[1]);
+        Assert.AreEqual(2, array.Length);
+        Assert.AreSame(Zambia, array[0]);
+        Assert.AreSame(Bolivia, array[1]);
     }
 
     [TestMethod]
-    public void SelectAllFrom_InnerJoin_Where()
+    public void SelectAllFrom_InnerJoin_Where_Execute()
     {
         var personRow = new PersonRow(1, 2, 3);
         var cache = new MetadataBank();
-        var reservoir = new TestReservoir(new[]
-        {
-            personRow,
-        });
-        var siphon = new TestSiphon(new[] { reservoir });
+        var reservoir = new TestReservoir([personRow]);
+        var siphon = new TestSiphon([reservoir]);
         var q = new QueryImpl(siphon, cache);
         var parameters = ImmutableDictionary.CreateRange(
-            ImmutableArray.Create(
-                KeyValuePair.Create("$firstName", (object)"Yuri")));
+            [KeyValuePair.Create("$firstName", (object)"Yuri")]);
         var all = q.SelectAllFrom<PersonRow>("p")
             .InnerJoin<StringRow>("s", "s.id = p.firstNameId")
             .Where("s.value = $firstName", parameters)
-            .Execute()
-            .ToArray();
+            .Execute();
+        var array = all.ToArray();
         var result = siphon.StatementList;
         var resultTexts = result.Select(i => i.Text).ToArray();
         var expectedTexts = new[]
@@ -279,26 +395,28 @@ public sealed class QueryTest
         var p = result[0].Parameters;
         Assert.IsNotNull(p);
         Assert.AreSame("Yuri", p["$firstName"]);
-        Assert.AreEqual(1, all.Length);
-        Assert.AreSame(personRow, all[0]);
+        Assert.AreEqual(1, array.Length);
+        Assert.AreSame(personRow, array[0]);
     }
 
     [TestMethod]
     public void Select()
     {
         var cache = new MetadataBank();
+        var rows = new[]
+        {
+            Zambia,
+            Bolivia,
+        };
         var reservoir = new TestReservoir(
-            new[]
-            {
-                Zambia,
-                Bolivia,
-            }.Select(i => new StringView(i.Name)));
-        var siphon = new TestSiphon(new[] { reservoir });
+            rows.Select(i => new StringView(i.Name)));
+        var siphon = new TestSiphon([reservoir]);
         var q = new QueryImpl(siphon, cache);
         var all = q.Select<StringView>("c.country")
             .From<CoffeeRow>("c")
             .OrderBy("c.name")
-            .ToArray();
+            .Execute();
+        var array = all.ToArray();
         var result = siphon.StatementList;
         var resultTexts = result.Select(i => i.Text).ToArray();
         var expectedTexts = new[]
@@ -308,9 +426,9 @@ public sealed class QueryTest
         CollectionAssert.AreEqual(expectedTexts, resultTexts);
         var p = result[0].Parameters;
         Assert.IsNull(p);
-        Assert.AreEqual(2, all.Length);
-        Assert.AreEqual(all[0].Value, Zambia.Name);
-        Assert.AreEqual(all[1].Value, Bolivia.Name);
+        Assert.AreEqual(2, array.Length);
+        Assert.AreEqual(array[0].Value, Zambia.Name);
+        Assert.AreEqual(array[1].Value, Bolivia.Name);
     }
 
     [TestMethod]
@@ -319,8 +437,7 @@ public sealed class QueryTest
         var cache = new MetadataBank();
         var siphon = new TestSiphon();
         var parameters = ImmutableDictionary.CreateRange(
-            ImmutableArray.Create(
-                KeyValuePair.Create("$country", (object)Bolivia.Name)));
+            [KeyValuePair.Create("$country", (object)Bolivia.Name)]);
         var q = new QueryImpl(siphon, cache);
         q.DeleteFrom<CoffeeRow>()
             .Where("country = $country", parameters);
@@ -364,12 +481,8 @@ public sealed class QueryTest
     public void SelectUnique()
     {
         var cache = new MetadataBank();
-        var reservoir = new TestReservoir(
-            new[]
-            {
-                Zambia,
-            });
-        var siphon = new TestSiphon(new[] { reservoir });
+        var reservoir = new TestReservoir([Zambia]);
+        var siphon = new TestSiphon([reservoir]);
         var q = new QueryImpl(siphon, cache);
         var maybeRow = q.SelectUnique<CoffeeRow>("name", Zambia.Name);
         var result = siphon.StatementList;
@@ -391,7 +504,7 @@ public sealed class QueryTest
     {
         var cache = new MetadataBank();
         var reservoir = new TestReservoir();
-        var siphon = new TestSiphon(new[] { reservoir });
+        var siphon = new TestSiphon([reservoir]);
         var q = new QueryImpl(siphon, cache);
         var maybeRow = q.SelectUnique<CoffeeRow>("name", Zambia.Name);
         var result = siphon.StatementList;

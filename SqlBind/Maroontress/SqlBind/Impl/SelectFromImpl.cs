@@ -2,8 +2,8 @@
 
 namespace Maroontress.SqlBind.Impl;
 
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// The default implementation of <see cref="SelectFrom{T}"/>.
@@ -11,34 +11,22 @@ using System.Linq;
 /// <typeparam name="T">
 /// The type of the class representing any row of the result of the query.
 /// </typeparam>
-public sealed class SelectFromImpl<T> : SelectFrom<T>
+/// <param name="bank">
+/// The <see cref="Bank"/> object.
+/// </param>
+/// <param name="siphon">
+/// The <see cref="Siphon"/> object.
+/// </param>
+/// <param name="text">
+/// The prefix statement.
+/// </param>
+public sealed class SelectFromImpl<T>(
+        MetadataBank bank, Siphon siphon, string text)
+    : AbstractSelectSorter<T>(text, ToExecutor(siphon)),
+        SelectFrom<T>
     where T : notnull
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SelectFromImpl{T}"/>
-    /// class.
-    /// </summary>
-    /// <param name="bank">
-    /// The <see cref="Bank"/> object.
-    /// </param>
-    /// <param name="siphon">
-    /// The <see cref="Siphon"/> object.
-    /// </param>
-    /// <param name="text">
-    /// The prefix statement.
-    /// </param>
-    internal SelectFromImpl(MetadataBank bank, Siphon siphon, string text)
-    {
-        Bank = bank;
-        Siphon = siphon;
-        Text = text;
-    }
-
-    private MetadataBank Bank { get; }
-
-    private Siphon Siphon { get; }
-
-    private string Text { get; }
+    private MetadataBank Bank { get; } = bank;
 
     /// <inheritdoc/>
     public SelectFrom<T> InnerJoin<U>(string alias, string constraint)
@@ -54,7 +42,7 @@ public sealed class SelectFromImpl<T> : SelectFrom<T>
             alias,
             "ON",
             constraint);
-        return new SelectFromImpl<T>(Bank, Siphon, newText);
+        return new SelectFromImpl<T>(Bank, siphon, newText);
     }
 
     /// <inheritdoc/>
@@ -62,28 +50,21 @@ public sealed class SelectFromImpl<T> : SelectFrom<T>
         string condition,
         IReadOnlyDictionary<string, object> parameters)
     {
-        var text = Text + $" WHERE {condition}";
-        return new WhereImpl<T>(Siphon, text, parameters);
+        var newText = Text + $" WHERE {condition}";
+        return new WhereImpl<T>(siphon, newText, parameters);
     }
 
-    /// <inheritdoc/>
-    public IEnumerable<T> Execute()
+    private static Func<string, IEnumerable<T>> ToExecutor(Siphon siphon)
     {
-        return Execute(Text);
-    }
+        IEnumerable<T> Executor(string s)
+        {
+            using var reader = siphon.ExecuteReader(s);
+            while (reader.Read())
+            {
+                yield return reader.NewInstance<T>();
+            }
+        }
 
-    /// <inheritdoc/>
-    public IEnumerable<T> OrderBy(params string[] columns)
-    {
-        var orderBy = string.Join(", ", columns);
-        var text = $"{Text} ORDER BY {orderBy}";
-        return Execute(text);
-    }
-
-    private IEnumerable<T> Execute(string text)
-    {
-        using var reader = Siphon.ExecuteReader(text);
-        return reader.NewInstances<T>()
-            .ToList();
+        return Executor;
     }
 }
