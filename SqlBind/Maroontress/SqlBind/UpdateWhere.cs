@@ -4,6 +4,6 @@ namespace Maroontress.SqlBind;
 /// Represents the <c>WHERE</c> clause in an <c>UPDATE</c> statement.
 /// </summary>
 public interface UpdateWhere
-    : UpdateTerminalOperation
+    : UpdateTerminator
 {
 }

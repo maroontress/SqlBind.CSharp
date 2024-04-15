@@ -15,8 +15,8 @@ public interface Update
     /// not contain the <c>alias</c> specified in the <see
     /// cref="Query.Update{T}(string)"/> method. The values of the parameters
     /// in the expression can be specified with the <see
-    /// cref="UpdateTerminalOperation.Execute(IReadOnlyDictionary{string,
-    /// object})"/> method.
+    /// cref="UpdateTerminator.Execute(IReadOnlyDictionary{string, object})"/>
+    /// method.
     /// </param>
     /// <returns>
     /// The new <see cref="UpdateSet"/> object.

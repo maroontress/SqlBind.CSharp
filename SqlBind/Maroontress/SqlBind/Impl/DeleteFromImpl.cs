@@ -8,27 +8,18 @@ using System.Collections.Generic;
 /// <typeparam name="T">
 /// The type of the class qualified with the <see cref="TableAttribute"/>.
 /// </typeparam>
-public sealed class DeleteFromImpl<T> : DeleteFrom<T>
+/// <param name="siphon">
+/// The <see cref="Siphon"/> object.
+/// </param>
+/// <param name="text">
+/// The prefix statement.
+/// </param>
+public sealed class DeleteFromImpl<T>(Siphon siphon, string text)
+    : DeleteFrom<T>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DeleteFromImpl{T}"/>
-    /// class.
-    /// </summary>
-    /// <param name="siphon">
-    /// The <see cref="Siphon"/> object.
-    /// </param>
-    /// <param name="text">
-    /// The prefix statement.
-    /// </param>
-    internal DeleteFromImpl(Siphon siphon, string text)
-    {
-        Siphon = siphon;
-        Text = text;
-    }
+    private Siphon Siphon { get; } = siphon;
 
-    private Siphon Siphon { get; }
-
-    private string Text { get; }
+    private string Text { get; } = text;
 
     /// <inheritdoc/>
     public void Where(

@@ -25,11 +25,18 @@ public record class Actor(
 }
 ```
 
-Each parameter in the constructor of the `Actor` class corresponds to each column in the Actors table in the same order. The type of each parameter must be either `long` or `string`.
+Each parameter in the constructor of the `Actor` class corresponds to each
+column in the Actors table in the same order. The type of each parameter must be
+either `long` or `string`.
 
-Note that you can implement the `Actor` class without a `record` class. However, the parameter names of the constructor must start with an _uppercase_ letter if you create a regular one according to the naming conventions of the `record` class. This is inconsistent with general naming conventions. Therefore, we recommend that you use `record` classes.
+Note that you can implement the `Actor` class without a `record` class. However,
+the parameter names of the constructor must start with an _uppercase_ letter if
+you create a regular one according to the naming conventions of the `record`
+class. This is inconsistent with general naming conventions. Therefore, we
+recommend that you use `record` classes.
 
-The following code from the `Example` class uses the `Actor` class to create the Actors table and add three rows of data to the table:
+The following code from the `Example` class uses the `Actor` class to create the
+Actors table and add three rows of data to the table:
 
 ```csharp
 public sealed class Example
@@ -51,11 +58,18 @@ public sealed class Example
     ...
 ```
 
-The `Kit` property has the `TransactionKit` instance, which uses the `example.db` file as a database backend and writes log messages to the console. The `Execute` method executes the queries that the lambda expression of its parameter performs atomically (as a single transaction).
+The `Kit` property has the `TransactionKit` instance, which uses the
+`example.db` file as a database backend and writes log messages to the console.
+The `Execute` method executes the queries that the lambda expression of its
+parameter performs atomically (as a single transaction).
 
-Note that calling the `Insert(object)` method with the `Actor` instance ignores its `Id` property, which is specified with the first parameter of the constructor of the `Actor` class, because it is qualified with the `AutoIncrement` attribute.
+Note that calling the `Insert(object)` method with the `Actor` instance ignores
+its `Id` property, which is specified with the first parameter of the
+constructor of the `Actor` class, because it is qualified with the
+`AutoIncrement` attribute.
 
-The log messages that the `CreateTableAndInsertRows()` method prints to the console are as follows:
+The log messages that the `CreateTableAndInsertRows()` method prints to the
+console are as follows:
 
 ```plaintext
 DROP TABLE IF EXISTS Actors
@@ -68,7 +82,8 @@ INSERT INTO Actors (name) VALUES ($name)
   ($name, Jack Reynor)
 ```
 
-The non-indented lines are actual SQL statements that were automatically generated and executed.
+The non-indented lines are actual SQL statements that were automatically
+generated and executed.
 
 ## How to select a table and get rows
 
@@ -82,7 +97,7 @@ public sealed class Example
     {
         Kit.Execute(q =>
         {
-            var all = q.SelectAll<Actor>();
+            using var all = q.SelectAll<Actor>();
             foreach (var i in all)
             {
                 Console.WriteLine(i);
@@ -101,9 +116,11 @@ Actor { Id = 2, Name = Gary Carr }
 Actor { Id = 3, Name = Jack Reynor }
 ```
 
-The first line is the log message that the `TransactionKit` instance prints. The `SelectAll<T>()` method generates this statement.
+The first line is the log message that the `TransactionKit` instance prints. The
+`SelectAll<T>()` method generates this statement.
 
-The next three lines are the messages that the `WriteLine(object)` method outputs within the `foreach` block.
+The next three lines are the messages that the `WriteLine(object)` method
+outputs within the `foreach` block.
 
 ## Inner join with two or more tables
 
@@ -175,9 +192,10 @@ public sealed class Example
     ...
 ```
 
-The log messages that the `CreateTables()` method prints to the console are as follows:
+The log messages that the `CreateTables()` method prints to the console are as
+follows:
 
-```
+```plaintext
 DROP TABLE IF EXISTS Titles
 CREATE TABLE Titles (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)
 DROP TABLE IF EXISTS Actors
@@ -210,7 +228,8 @@ INSERT INTO Casts (titleId, actorId, role) VALUES ($titleId, $actorId, $role)
   ($actorId, 3)
 ```
 
-Let's suppose that you would like to get a list of the names of the actors who performed in the specified title. To do this, use the APIs as follows:
+Let's suppose that you would like to get a list of the names of the actors who
+performed in the specified title. To do this, use the APIs as follows:
 
 ```csharp
 public sealed class Example
@@ -241,7 +260,7 @@ public sealed class Example
 
 Calling `ListActorNames("Peripheral");` results in the following output:
 
-```
+```plaintext
 SELECT a.id, a.name FROM Actors a INNER JOIN Casts c ON a.id = c.actorId INNER JOIN Titles t ON t.id = c.titleId WHERE t.name = $name
   ($name, Peripheral)
 Chloë Grace Moretz
@@ -249,12 +268,10 @@ Gary Carr
 Jack Reynor
 ```
 
-<!--
 ## Get started
 
 SqlBind.CSharp is available as
 [the ![NuGet-logo][nuget-logo] NuGet package][nuget-maroontress.sqlbind].
--->
 
 ## API Reference
 

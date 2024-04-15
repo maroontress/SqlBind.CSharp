@@ -5,21 +5,13 @@ using Microsoft.Data.Sqlite;
 /// <summary>
 /// The implementation with Sqlite.
 /// </summary>
-public sealed class SqliteCommittable : Committable
+/// <param name="transaction">
+/// The Sqlite's transaction.
+/// </param>
+public sealed class SqliteCommittable(SqliteTransaction transaction)
+    : Committable
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SqliteCommittable"/>
-    /// class.
-    /// </summary>
-    /// <param name="transaction">
-    /// The Sqlite's transaction.
-    /// </param>
-    public SqliteCommittable(SqliteTransaction transaction)
-    {
-        Transaction = transaction;
-    }
-
-    private SqliteTransaction Transaction { get; }
+    private SqliteTransaction Transaction { get; } = transaction;
 
     /// <inheritdoc/>
     public void Commit()
