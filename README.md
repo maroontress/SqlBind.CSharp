@@ -97,7 +97,7 @@ public sealed class Example
     {
         Kit.Execute(q =>
         {
-            using var all = q.SelectAll<Actor>();
+            var all = q.SelectAll<Actor>();
             foreach (var i in all)
             {
                 Console.WriteLine(i);
